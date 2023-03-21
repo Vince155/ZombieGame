@@ -20,9 +20,11 @@ public class EnemySystem {
     private float bigEnemyTimer;
     private float fastEnemyTimer;
     private float bossTimer;
+    private boolean basicEnemyInPlay;
     private boolean bigEnemyInPlay;
     private boolean fastEnemyInPlay;
     private boolean bossInPlay;
+    private boolean bossIsDead;
     private final HashMap<Long, Entity> enemyEntities;
     private final HashMap<Long, Entity> allyEntities;
     private final HashMap<Long, Entity> projectileEntities;
@@ -45,40 +47,35 @@ public class EnemySystem {
         this.projectileSystem = projectileSystem;
         this.playerSystem = playerSystem;
         enemyTimer = 5f;
+        bigEnemyTimer = 5f;
+        fastEnemyTimer = 5f;
+        bossTimer = 5f;
+        basicEnemyInPlay = true;
     }
 
     public void update(SpriteBatch batch) {
-        if (enemyTimer <= 0f) {
-            Entity relevantEntity = null;
-            int random = MathUtils.random(allyEntities.size());
+        handleBasicEnemyCreation();
+        handleFastEnemyCreation();
+        handleBigEnemyCreation();
+        handleBossEnemyCreation();
+        handleEnemySpawnLogic();
 
-            for (Entity entity: allyEntities.values()) {
-                if (random == 0 || allyEntities.size() == 1) {
-                    relevantEntity = entity;
-
-                    break;
-                }
-
-                random--;
-            }
-
-            if (relevantEntity == null) {
-                Logger.error("No allies exist");
-
-                return;
-            }
-
-            Entity newEnemyEntity = createEnemy(
-                    relevantEntity.guid,
-                    5f,
-                    100f,
-                    "BlackBox.png"
-            );
-            this.enemyEntities.put(newEnemyEntity.guid, newEnemyEntity);
-            enemyTimer = 3f;
+        if (basicEnemyInPlay) {
+            enemyTimer -= Gdx.graphics.getDeltaTime();
         }
 
-        enemyTimer -= Gdx.graphics.getDeltaTime();
+        if (fastEnemyInPlay) {
+            fastEnemyTimer -= Gdx.graphics.getDeltaTime();
+        }
+
+        if (bigEnemyInPlay) {
+            bigEnemyTimer -= Gdx.graphics.getDeltaTime();
+        }
+
+        if (bossInPlay) {
+            bossTimer -= Gdx.graphics.getDeltaTime();
+        }
+
         PriorityQueue<Long> queue = new PriorityQueue<>();
 
         for (Entity entity: this.enemyEntities.values()) {
@@ -113,15 +110,176 @@ public class EnemySystem {
         enemy.draw(batch);
     }
 
-    private Entity createEnemy(Long allyId, float health, float scoreValue, String sprite) {
+    private Entity getPlayerEntity() {
+        Entity relevantEntity = null;
+        int random = MathUtils.random(allyEntities.size());
+
+        for (Entity entity: allyEntities.values()) {
+            if (random == 0 || allyEntities.size() == 1) {
+                relevantEntity = entity;
+
+                break;
+            }
+
+            random--;
+        }
+
+        if (relevantEntity == null) {
+            Logger.error("No allies exist");
+
+            return null;
+        }
+
+        return relevantEntity;
+    }
+
+    private Entity createEnemy(
+            Long allyId,
+            float health,
+            float scoreValue,
+            String sprite,
+            float speed
+    ) {
         Entity entity = new Entity();
         Level level = (Level) Utils.getComponent(levelEntity, Level.class);
         float xPos = MathUtils.random.nextInt((int) level.width);
         float yPos = MathUtils.random.nextInt((int) level.height);
-        Enemy enemy = new Enemy(sprite, xPos, yPos, allyId, health, scoreValue);
+        Enemy enemy = new Enemy(sprite, xPos, yPos, allyId, health, scoreValue, speed);
         entity.components.add(enemy);
 
         return entity;
+    }
+
+    private Entity createBasicEnemy() {
+        Entity playerEntity = getPlayerEntity();
+
+        if (playerEntity == null) {
+            Logger.error("Player entity is null");
+
+            return null;
+        }
+
+        return createEnemy(
+                playerEntity.guid,
+                5f,
+                100f,
+                "BlackBox.png",
+                50f
+        );
+    }
+
+    private Entity createFastEnemy() {
+        Entity playerEntity = getPlayerEntity();
+
+        if (playerEntity == null) {
+            Logger.error("Player entity is null");
+
+            return null;
+        }
+
+        return createEnemy(
+                playerEntity.guid,
+                5f,
+                400f,
+                "YellowBox.png",
+                135f
+        );
+    }
+
+    private Entity createBigEnemy() {
+        Entity playerEntity = getPlayerEntity();
+
+        if (playerEntity == null) {
+            Logger.error("Player entity is null");
+
+            return null;
+        }
+
+        return createEnemy(
+                playerEntity.guid,
+                10f,
+                300f,
+                "BigOrangeBox.png",
+                75f
+        );
+    }
+
+    private Entity createBoss() {
+        Entity playerEntity = getPlayerEntity();
+
+        if (playerEntity == null) {
+            Logger.error("Player entity is null");
+
+            return null;
+        }
+
+        return createEnemy(
+                playerEntity.guid,
+                50f,
+                3000f,
+                "PurpleBox.png",
+                110f
+        );
+    }
+
+    private void handleBasicEnemyCreation() {
+        if (enemyTimer <= 0f && basicEnemyInPlay && !bossInPlay) {
+            Entity newBasicEnemyEntity = createBasicEnemy();
+
+            if (newBasicEnemyEntity == null) {
+                Logger.error("Failed to create basic enemy");
+
+                return;
+            }
+
+            this.enemyEntities.put(newBasicEnemyEntity.guid, newBasicEnemyEntity);
+            enemyTimer = 3f;
+        }
+    }
+
+    private void handleFastEnemyCreation() {
+        if (fastEnemyTimer <= 0f && fastEnemyInPlay && !bossInPlay) {
+            Entity newFastEnemyEntity = createFastEnemy();
+
+            if (newFastEnemyEntity == null) {
+                Logger.error("Failed to create fast enemy");
+
+                return;
+            }
+
+            this.enemyEntities.put(newFastEnemyEntity.guid, newFastEnemyEntity);
+            fastEnemyTimer = 5f;
+        }
+    }
+
+    private void handleBigEnemyCreation() {
+        if (bigEnemyTimer <= 0f && bigEnemyInPlay && !bossInPlay) {
+            Entity newBigEnemyEntity = createBigEnemy();
+
+            if (newBigEnemyEntity == null) {
+                Logger.error("Failed to create big enemy");
+
+                return;
+            }
+
+            this.enemyEntities.put(newBigEnemyEntity.guid, newBigEnemyEntity);
+            bigEnemyTimer = 5f;
+        }
+    }
+
+    private void handleBossEnemyCreation() {
+        if (bossInPlay) {
+            Entity bossEntity = createBoss();
+
+            if (bossEntity == null) {
+                Logger.error("Failed to create boss");
+
+                return;
+            }
+
+            this.enemyEntities.put(bossEntity.guid, bossEntity);
+            bossTimer = 5000f;
+        }
     }
 
     private boolean isDead(Enemy enemy) {
@@ -163,6 +321,34 @@ public class EnemySystem {
         }
 
         return isHit;
+    }
+
+    private void handleEnemySpawnLogic() {
+        Level level = (Level) Utils.getComponent(levelEntity, Level.class);
+
+        if (level == null) {
+            Logger.error("Level time is null");
+
+            return;
+        }
+
+        float levelTime = level.time;
+
+        if (bossIsDead) {
+            bossInPlay = false;
+        }
+
+        if (levelTime >= 30f) {
+            bigEnemyInPlay = true;
+        }
+
+        if (levelTime >= 45f) {
+            fastEnemyInPlay = true;
+        }
+
+        if (levelTime >= 180f && !bossIsDead) {
+            bossInPlay = true;
+        }
     }
 
     private void rotateTowards(Enemy enemy) {

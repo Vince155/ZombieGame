@@ -49,6 +49,7 @@ public class ZombieGame extends Game {
 		Level level = new Level("vecteezy_cute-abstract-modern-background_.jpg");
 		level.height = Gdx.graphics.getHeight();
 		level.width = Gdx.graphics.getWidth();
+		level.time = 0f;
 		level.setSize(level.width, level.height);
 		levelEntity.components.add(level);
 

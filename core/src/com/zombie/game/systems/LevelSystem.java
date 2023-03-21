@@ -1,5 +1,6 @@
 package com.zombie.game.systems;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.zombie.game.components.Level;
@@ -24,6 +25,7 @@ public class LevelSystem extends ScreenAdapter {
             return;
         }
 
+        level.time += Gdx.graphics.getDeltaTime();
         level.draw(batch);
     }
 }
