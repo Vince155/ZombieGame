@@ -16,7 +16,8 @@ public class Enemy extends Sprite implements IComponent {
             float yStart,
             Long allyId,
             float maxHealth,
-            float value
+            float value,
+            float speed
     ) {
         super(new Texture(sprite));
         this.movement = new Movement();
@@ -24,7 +25,7 @@ public class Enemy extends Sprite implements IComponent {
         this.setPosition(xStart, yStart);
         this.movement.position.x = this.getX();
         this.movement.position.y = this.getY();
-        this.movement.velocity = new Vector2(50f, 50f);
+        this.movement.velocity = new Vector2(speed, speed);
         this.health = new Health(maxHealth, maxHealth);
         this.allyId = allyId;
         this.value = value;
