@@ -82,7 +82,7 @@ public class ProjectileSystem {
         Entity entity = new Entity();
         Projectile projectile = new Projectile(
                 "Bullet.png",
-                125f,
+                600f,
                 2f,
                 false,
                 playerId

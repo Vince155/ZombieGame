@@ -20,6 +20,6 @@ public class Player extends Sprite implements IComponent {
         this.health = new Health(5f, 5f);
         this.score = 0f;
         this.weaponTimer = 0f;
-        this.maxWeaponTimer = 1f;
+        this.maxWeaponTimer = 0.4f;
     }
 }
