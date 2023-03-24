@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.zombie.game.components.Enemy;
 import com.zombie.game.components.Level;
 import com.zombie.game.components.Player;
@@ -152,9 +153,30 @@ public class EnemySystem {
             String name
     ) {
         Entity entity = new Entity();
+        Entity playerEntity = allyEntities.get(allyId);
+        Player player = (Player) Utils.getComponent(playerEntity, Player.class);
         Level level = (Level) Utils.getComponent(levelEntity, Level.class);
+
+        if (player == null) {
+            return null;
+        }
+
+        if (level == null) {
+            return null;
+        }
+
         float xPos = MathUtils.random.nextInt((int) level.width);
         float yPos = MathUtils.random.nextInt((int) level.height);
+        float playerXPos = player.movement.position.x;
+        float playerYPos = player.movement.position.y;
+        float distance = Vector2.dst(xPos, yPos, playerXPos, playerYPos);
+
+        while (distance <= 400f) {
+            xPos = MathUtils.random.nextInt((int) level.width);
+            yPos = MathUtils.random.nextInt((int) level.height);
+            distance = Vector2.dst(xPos, yPos, playerXPos, playerYPos);
+        }
+
         Enemy enemy = new Enemy(sprite, xPos, yPos, allyId, health, scoreValue, speed, name);
         entity.components.add(enemy);
 
