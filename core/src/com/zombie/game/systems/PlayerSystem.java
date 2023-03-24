@@ -52,8 +52,15 @@ public class PlayerSystem {
                 continue;
             }
 
-            if (isHit(player)) {
-                System.out.println("Player is hit");
+            player.hitTimer -= Gdx.graphics.getDeltaTime();
+
+            if ((isHitByProjectile(player) || isHitByZombie(player)) && player.hitTimer <= 0f) {
+                player.health.current--;
+                player.hitTimer = 1f;
+            }
+
+            if (isDead(player)) {
+                System.out.println("Player is dead");
             }
         }
     }
@@ -140,7 +147,7 @@ public class PlayerSystem {
         player.weaponTimer = player.maxWeaponTimer;
     }
 
-    private boolean isHit(Player player) {
+    private boolean isHitByProjectile(Player player) {
         PriorityQueue<Long> queue = new PriorityQueue<>();
         boolean isHit = false;
 
@@ -174,5 +181,30 @@ public class PlayerSystem {
         }
 
         return isHit;
+    }
+
+    private boolean isHitByZombie(Player player) {
+        boolean isHit = false;
+
+        for (Entity enemyEntity: enemyEntities.values()) {
+            Enemy enemy = (Enemy) Utils.getComponent(enemyEntity, Enemy.class);
+
+            if (enemy == null) {
+                continue;
+            }
+
+            Rectangle enemyBoundingRectangle = enemy.getBoundingRectangle();
+            Rectangle playerBoundingRectangle = player.getBoundingRectangle();
+
+            if (playerBoundingRectangle.overlaps(enemyBoundingRectangle)) {
+                isHit = true;
+            }
+        }
+
+        return isHit;
+    }
+
+    private boolean isDead(Player player) {
+        return player.health.current <= 0f;
     }
 }

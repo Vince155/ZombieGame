@@ -10,6 +10,7 @@ public class Player extends Sprite implements IComponent {
     public float score;
     public float weaponTimer;
     public float maxWeaponTimer;
+    public float hitTimer;
 
     public Player(String sprite, float xStart, float yStart) {
         super(new Texture(sprite));
@@ -21,5 +22,6 @@ public class Player extends Sprite implements IComponent {
         this.score = 0f;
         this.weaponTimer = 0f;
         this.maxWeaponTimer = 0.4f;
+        this.hitTimer = 1f;
     }
 }
