@@ -7,23 +7,34 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.zombie.game.components.Camera;
+import com.zombie.game.components.Enemy;
 import com.zombie.game.components.Player;
+import com.zombie.game.components.Projectile;
 import com.zombie.game.entity.Entity;
 import com.zombie.game.helpers.Utils;
 
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class PlayerSystem {
     private final HashMap<Long, Entity> entities;
     private final Entity cameraEntity;
     private final ProjectileSystem projectileSystem;
+    private final HashMap<Long, Entity> projectileEntities;
+    private final HashMap<Long, Entity> enemyEntities;
+
 
     public PlayerSystem(
             HashMap<Long, Entity> entities,
+            HashMap<Long, Entity> projectileEntities,
+            HashMap<Long, Entity> enemyEntities,
+
             Entity cameraEntity,
             ProjectileSystem projectileSystem
     ) {
         this.entities = entities;
+        this.projectileEntities = projectileEntities;
+        this.enemyEntities = enemyEntities;
         this.cameraEntity = cameraEntity;
         this.projectileSystem = projectileSystem;
     }
@@ -34,6 +45,16 @@ public class PlayerSystem {
             lowerProjectileTimer(entity);
             handleMovement(entity);
             rotateTowardsMouse(entity);
+
+            Player player = (Player) Utils.getComponent(entity, Player.class);
+
+            if (player == null) {
+                continue;
+            }
+
+            if (isHit(player)) {
+                System.out.println("Player is hit");
+            }
         }
     }
 
@@ -117,5 +138,41 @@ public class PlayerSystem {
 
     private void resetWeaponTimer(Player player) {
         player.weaponTimer = player.maxWeaponTimer;
+    }
+
+    private boolean isHit(Player player) {
+        PriorityQueue<Long> queue = new PriorityQueue<>();
+        boolean isHit = false;
+
+        for (Entity projectileEntity: projectileEntities.values()) {
+            Projectile projectile = (Projectile) Utils.getComponent(projectileEntity, Projectile.class);
+
+            if (projectile == null) {
+                continue;
+            }
+
+            Long boxId = projectile.boxId;
+            Entity bossEntity = enemyEntities.get(boxId);
+
+            if (bossEntity == null) {
+                continue;
+            }
+
+            Rectangle projectileBoundingRectangle = projectile.getBoundingRectangle();
+            Rectangle playerBoundingRectangle = player.getBoundingRectangle();
+
+            if (projectileBoundingRectangle.overlaps(playerBoundingRectangle)) {
+                queue.add(projectileEntity.guid);
+                isHit = true;
+            }
+        }
+
+        while (queue.size() > 0) {
+            Long projectileId = queue.poll();
+
+            projectileSystem.removeProjectileEntity(projectileId);
+        }
+
+        return isHit;
     }
 }

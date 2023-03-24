@@ -9,6 +9,9 @@ public class Enemy extends Sprite implements IComponent {
     public Movement movement;
     public Health health;
     public float value;
+    public String name;
+    public float weaponTimer;
+    public float maxWeaponTimer;
 
     public Enemy(
             String sprite,
@@ -17,7 +20,8 @@ public class Enemy extends Sprite implements IComponent {
             Long allyId,
             float maxHealth,
             float value,
-            float speed
+            float speed,
+            String name
     ) {
         super(new Texture(sprite));
         this.movement = new Movement();
@@ -29,5 +33,8 @@ public class Enemy extends Sprite implements IComponent {
         this.health = new Health(maxHealth, maxHealth);
         this.allyId = allyId;
         this.value = value;
+        this.name = name;
+        this.weaponTimer = 0f;
+        this.maxWeaponTimer = 4f;
     }
 }

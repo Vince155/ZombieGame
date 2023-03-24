@@ -67,7 +67,6 @@ public class ProjectileSystem {
     }
 
     private boolean collidedWithLevel(Projectile projectile) {
-        //            removeProjectileEntity(entity.guid);
         return projectile.movement.position.x > Gdx.graphics.getWidth() ||
                 projectile.movement.position.x < 0f ||
                 projectile.movement.position.y > Gdx.graphics.getHeight() ||
@@ -83,7 +82,7 @@ public class ProjectileSystem {
         Projectile projectile = new Projectile(
                 "Bullet.png",
                 600f,
-                2f,
+                1f,
                 false,
                 playerId
         );

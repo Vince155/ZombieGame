@@ -66,7 +66,7 @@ public class ZombieGame extends Game {
 		projectileSystem = new ProjectileSystem(projectiles, allies);
 		headsUpDisplaySystem = new HeadsUpDisplaySystem(allies, cameraEntity, hudEntity);
 		levelSystem = new LevelSystem(levelEntity);
-		playerSystem = new PlayerSystem(allies, cameraEntity, projectileSystem);
+		playerSystem = new PlayerSystem(allies, projectiles, enemies, cameraEntity, projectileSystem);
 		cameraSystem = new CameraSystem(cameraEntity, playerEntity);
 		enemySystem = new EnemySystem(enemies, levelEntity, allies, projectiles, projectileSystem, playerSystem);
 	}
