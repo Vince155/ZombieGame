@@ -10,7 +10,6 @@ import com.zombie.game.components.Player;
 import com.zombie.game.entity.Entity;
 import com.zombie.game.systems.CameraSystem;
 import com.zombie.game.systems.EnemySystem;
-import com.zombie.game.systems.GameOverSystem;
 import com.zombie.game.systems.HeadsUpDisplaySystem;
 import com.zombie.game.systems.LevelSystem;
 import com.zombie.game.systems.PlayerSystem;
@@ -38,7 +37,7 @@ public class GameScreen extends ScreenAdapter {
         Entity playerEntity = new Entity();
         Entity cameraEntity = new Entity();
         Entity hudEntity = new Entity();
-        
+
         allies = new HashMap<>();
         enemies = new HashMap<>();
         projectiles = new HashMap<>();
