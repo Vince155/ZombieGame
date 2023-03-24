@@ -12,7 +12,9 @@ import com.zombie.game.entity.Entity;
 import com.zombie.game.helpers.Logger;
 import com.zombie.game.helpers.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.PriorityQueue;
 
 public class EnemySystem {
@@ -92,7 +94,15 @@ public class EnemySystem {
 
             if (isHit(enemy)) {
                 enemy.health.current--;
-                System.out.println(enemy.health.current);
+            }
+
+            if (Objects.equals(enemy.name, "boss")) {
+                enemy.weaponTimer -= Gdx.graphics.getDeltaTime();
+
+                if (enemy.weaponTimer <= 0f) {
+                    fireProjectiles(entity, enemy);
+                    enemy.weaponTimer = enemy.maxWeaponTimer;
+                }
             }
 
             rotateTowards(enemy);
@@ -138,13 +148,14 @@ public class EnemySystem {
             float health,
             float scoreValue,
             String sprite,
-            float speed
+            float speed,
+            String name
     ) {
         Entity entity = new Entity();
         Level level = (Level) Utils.getComponent(levelEntity, Level.class);
         float xPos = MathUtils.random.nextInt((int) level.width);
         float yPos = MathUtils.random.nextInt((int) level.height);
-        Enemy enemy = new Enemy(sprite, xPos, yPos, allyId, health, scoreValue, speed);
+        Enemy enemy = new Enemy(sprite, xPos, yPos, allyId, health, scoreValue, speed, name);
         entity.components.add(enemy);
 
         return entity;
@@ -164,7 +175,8 @@ public class EnemySystem {
                 5f,
                 100f,
                 "BlackBox.png",
-                50f
+                50f,
+                "basic"
         );
     }
 
@@ -182,7 +194,8 @@ public class EnemySystem {
                 5f,
                 400f,
                 "YellowBox.png",
-                135f
+                135f,
+                "fast"
         );
     }
 
@@ -200,7 +213,8 @@ public class EnemySystem {
                 10f,
                 300f,
                 "BigOrangeBox.png",
-                75f
+                75f,
+                "big"
         );
     }
 
@@ -218,7 +232,8 @@ public class EnemySystem {
                 50f,
                 3000f,
                 "PurpleBox.png",
-                110f
+                110f,
+                "boss"
         );
     }
 
@@ -268,7 +283,7 @@ public class EnemySystem {
     }
 
     private void handleBossEnemyCreation() {
-        if (bossInPlay) {
+        if (bossTimer <= 0f && bossInPlay) {
             Entity bossEntity = createBoss();
 
             if (bossEntity == null) {
@@ -297,8 +312,13 @@ public class EnemySystem {
                 continue;
             }
 
-            Long playerId = projectile.playerId;
-            Entity playerEntity = allyEntities.get(playerId);
+            Long boxId = projectile.boxId;
+            Entity playerEntity = allyEntities.get(boxId);
+
+            if (playerEntity == null) {
+                continue;
+            }
+
             Player player = (Player) Utils.getComponent(playerEntity, Player.class);
 
             Rectangle projectileBoundingRectangle = projectile.getBoundingRectangle();
@@ -378,5 +398,53 @@ public class EnemySystem {
 
         enemy.translateX(velocityX);
         enemy.translateY(velocityY);
+    }
+
+    private void fireProjectiles(Entity bossEntity, Enemy enemy) {
+        float[] rotations = {
+                0f,
+                20f,
+                40f,
+                60f,
+                80f,
+                100f,
+                120f,
+                140f,
+                160f,
+                180f,
+                200f,
+                220f,
+                240f,
+                260f,
+                280f,
+                300f,
+                320f,
+                340f,
+                360f
+        };
+
+        for (float rotation: rotations) {
+            Entity projectileEntity = createProjectile(bossEntity, enemy, rotation);
+            projectileEntities.put(projectileEntity.guid, projectileEntity);
+        }
+    }
+
+    private Entity createProjectile(Entity bossEntity, Enemy enemy, float rotation) {
+        Entity entity = new Entity();
+        Projectile projectile = new Projectile(
+                "Bullet.png",
+                250f,
+                1f,
+                false,
+                bossEntity.guid
+        );
+
+        float bossPosX = enemy.movement.position.x;
+        float bossPosY = enemy.movement.position.y;
+        projectile.setPosition(bossPosX + (enemy.getWidth() / 2f), bossPosY);
+        projectile.setRotation(rotation);
+        entity.components.add(projectile);
+
+        return entity;
     }
 }

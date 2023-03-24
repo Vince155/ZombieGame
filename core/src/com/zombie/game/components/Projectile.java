@@ -9,17 +9,17 @@ public class Projectile extends Sprite implements IComponent {
     public Movement movement;
     public float damage;
     public boolean explosive;
-    public long playerId;
+    public long boxId;
 
     public Projectile(
             String sprite,
             float speed,
             float damage,
             boolean explosive,
-            long playerId
+            long boxId
     ) {
         super(new Texture(sprite));
-        this.playerId = playerId;
+        this.boxId = boxId;
         this.explosive = explosive;
         this.damage = damage;
         this.movement = new Movement();
