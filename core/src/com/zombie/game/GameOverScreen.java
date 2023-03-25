@@ -15,7 +15,7 @@ public class GameOverScreen extends ScreenAdapter {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        timer = 5f;
+        timer = 2.5f;
     }
 
     @Override

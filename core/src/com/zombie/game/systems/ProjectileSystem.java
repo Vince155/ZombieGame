@@ -1,6 +1,7 @@
 package com.zombie.game.systems;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.zombie.game.components.Player;
 import com.zombie.game.components.Projectile;
@@ -47,6 +48,19 @@ public class ProjectileSystem {
             Long projectileId = queue.poll();
 
             removeProjectileEntity(projectileId);
+        }
+    }
+
+    public void dispose() {
+        for (Entity projectileEntity: projectileEntities.values()) {
+            Projectile projectile = getProjectileComponent(projectileEntity);
+
+            if (projectile == null) {
+                continue;
+            }
+
+            Texture projectileTexture = projectile.getTexture();
+            projectileTexture.dispose();
         }
     }
 

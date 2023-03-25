@@ -96,6 +96,10 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
+        levelSystem.dispose();
+        playerSystem.dispose();
+        projectileSystem.dispose();
+        enemySystem.dispose();
         enemies.clear();
         projectiles.clear();
         allies.clear();

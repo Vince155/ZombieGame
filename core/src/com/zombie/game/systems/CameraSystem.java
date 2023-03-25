@@ -9,15 +9,13 @@ import com.zombie.game.components.Player;
 import com.zombie.game.entity.Entity;
 import com.zombie.game.helpers.Utils;
 
-import java.util.HashMap;
-
 public class CameraSystem {
     private final Entity cameraEntity;
     private final Entity playerEntity;
 
     public CameraSystem(Entity cameraEntity, Entity playerEntity) {
         this.cameraEntity = cameraEntity;
-        Camera camera = (Camera) Utils.getComponent(cameraEntity, Camera.class);
+        Camera camera = (Camera) Utils.getComponent(this.cameraEntity, Camera.class);
         this.playerEntity = playerEntity;
         Player player = (Player) Utils.getComponent(this.playerEntity, Player.class);
 
@@ -38,7 +36,7 @@ public class CameraSystem {
         Camera camera = (Camera) Utils.getComponent(cameraEntity, Camera.class);
         Player player = (Player) Utils.getComponent(playerEntity, Player.class);
 
-        if (camera == null) {
+        if (camera == null || player == null) {
             return;
         }
 
