@@ -88,7 +88,7 @@ public class GameScreen extends ScreenAdapter {
             }
 
             if (player.health.current <= 0f) {
-                game.setScreen(new GameOverScreen(game));
+                game.setScreen(new GameOverScreen(game, player.score));
                 dispose();
             }
         }
