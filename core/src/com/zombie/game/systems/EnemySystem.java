@@ -207,7 +207,7 @@ public class EnemySystem {
 
         return createEnemy(
                 playerEntity.guid,
-                5f,
+                3f,
                 100f,
                 "BlackBox.png",
                 50f,
@@ -226,7 +226,7 @@ public class EnemySystem {
 
         return createEnemy(
                 playerEntity.guid,
-                5f,
+                2f,
                 400f,
                 "YellowBox.png",
                 135f,
@@ -245,7 +245,7 @@ public class EnemySystem {
 
         return createEnemy(
                 playerEntity.guid,
-                10f,
+                7f,
                 300f,
                 "BigOrangeBox.png",
                 75f,

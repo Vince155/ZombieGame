@@ -9,10 +9,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class GameOverScreen extends ScreenAdapter {
     private final ZombieGame game;
     private final OrthographicCamera camera;
+    private final float score;
     private float timer;
 
-    public GameOverScreen(ZombieGame game) {
+    public GameOverScreen(ZombieGame game, float score) {
         this.game = game;
+        this.score = score;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         timer = 2.5f;
@@ -34,9 +36,15 @@ public class GameOverScreen extends ScreenAdapter {
         );
         game.font.draw(
                 game.batch,
-                "Press the Left Mouse Button to Play",
+                "Score: " + score,
                 Gdx.graphics.getWidth() / 2f,
                 Gdx.graphics.getHeight() / 2.5f
+        );
+        game.font.draw(
+                game.batch,
+                "Press the Left Mouse Button to Play",
+                Gdx.graphics.getWidth() / 2f,
+                Gdx.graphics.getHeight() / 3f
         );
         game.batch.end();
         timer -= Gdx.graphics.getDeltaTime();
