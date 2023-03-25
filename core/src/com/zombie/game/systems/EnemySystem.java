@@ -1,6 +1,7 @@
 package com.zombie.game.systems;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,7 +14,6 @@ import com.zombie.game.entity.Entity;
 import com.zombie.game.helpers.Logger;
 import com.zombie.game.helpers.Utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.PriorityQueue;
@@ -23,7 +23,7 @@ public class EnemySystem {
     private float bigEnemyTimer;
     private float fastEnemyTimer;
     private float bossTimer;
-    private boolean basicEnemyInPlay;
+    private final boolean basicEnemyInPlay;
     private boolean bigEnemyInPlay;
     private boolean fastEnemyInPlay;
     private boolean bossInPlay;
@@ -114,6 +114,19 @@ public class EnemySystem {
         while (queue.size() > 0) {
             Long enemyId = queue.poll();
             enemyEntities.remove(enemyId);
+        }
+    }
+
+    public void dispose() {
+        for (Entity enemyEntity: enemyEntities.values()) {
+            Enemy enemy = (Enemy) Utils.getComponent(enemyEntity, Enemy.class);
+
+            if (enemy == null) {
+                continue;
+            }
+
+            Texture enemyTexture = enemy.getTexture();
+            enemyTexture.dispose();
         }
     }
 
@@ -342,6 +355,10 @@ public class EnemySystem {
             }
 
             Player player = (Player) Utils.getComponent(playerEntity, Player.class);
+
+            if (player == null) {
+                continue;
+            }
 
             Rectangle projectileBoundingRectangle = projectile.getBoundingRectangle();
             Rectangle enemyBoundingRectangle = enemy.getBoundingRectangle();

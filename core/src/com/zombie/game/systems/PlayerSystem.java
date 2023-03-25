@@ -2,6 +2,7 @@ package com.zombie.game.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -28,7 +29,6 @@ public class PlayerSystem {
             HashMap<Long, Entity> entities,
             HashMap<Long, Entity> projectileEntities,
             HashMap<Long, Entity> enemyEntities,
-
             Entity cameraEntity,
             ProjectileSystem projectileSystem
     ) {
@@ -58,10 +58,19 @@ public class PlayerSystem {
                 player.health.current--;
                 player.hitTimer = 1f;
             }
+        }
+    }
 
-            if (isDead(player)) {
-                System.out.println("Player is dead");
+    public void dispose() {
+        for (Entity playerEntity: entities.values()) {
+            Player player = (Player) Utils.getComponent(playerEntity, Player.class);
+
+            if (player == null) {
+                continue;
             }
+
+            Texture playerTexture = player.getTexture();
+            playerTexture.dispose();
         }
     }
 
@@ -117,7 +126,7 @@ public class PlayerSystem {
                 player.getY() + player.getHeight() / 2f,
                 0f
         );
-        float angle = (float) MathUtils.atan2(mousePos.y - playerPos.y, mousePos.x - playerPos.x);
+        float angle = MathUtils.atan2(mousePos.y - playerPos.y, mousePos.x - playerPos.x);
         float degrees = (float) (angle * (180 / Math.PI));
 
         player.setRotation(degrees);
@@ -202,9 +211,5 @@ public class PlayerSystem {
         }
 
         return isHit;
-    }
-
-    private boolean isDead(Player player) {
-        return player.health.current <= 0f;
     }
 }

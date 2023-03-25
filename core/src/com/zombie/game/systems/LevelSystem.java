@@ -2,6 +2,7 @@ package com.zombie.game.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.zombie.game.components.Level;
 import com.zombie.game.entity.Entity;
@@ -19,7 +20,7 @@ public class LevelSystem extends ScreenAdapter {
     }
 
     private void render(SpriteBatch batch) {
-        Level level = (Level) Utils.getComponent(this.levelEntity, Level.class);
+        Level level = (Level) Utils.getComponent(levelEntity, Level.class);
 
         if (level == null) {
             return;
@@ -27,5 +28,17 @@ public class LevelSystem extends ScreenAdapter {
 
         level.time += Gdx.graphics.getDeltaTime();
         level.draw(batch);
+    }
+
+    @Override
+    public void dispose() {
+        Level level = (Level) Utils.getComponent(levelEntity, Level.class);
+
+        if (level == null) {
+            return;
+        }
+
+        Texture levelTexture = level.getTexture();
+        levelTexture.dispose();
     }
 }
