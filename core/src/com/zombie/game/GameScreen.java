@@ -8,6 +8,7 @@ import com.zombie.game.components.HeadsUpDisplay;
 import com.zombie.game.components.Level;
 import com.zombie.game.components.Player;
 import com.zombie.game.entity.Entity;
+import com.zombie.game.helpers.Utils;
 import com.zombie.game.systems.CameraSystem;
 import com.zombie.game.systems.EnemySystem;
 import com.zombie.game.systems.HeadsUpDisplaySystem;
@@ -78,11 +79,23 @@ public class GameScreen extends ScreenAdapter {
         projectileSystem.update(game.batch);
         enemySystem.update(game.batch);
         game.batch.end();
+
+        for (Entity playerEntity: allies.values()) {
+            Player player = (Player) Utils.getComponent(playerEntity, Player.class);
+
+            if (player == null) {
+                continue;
+            }
+
+            if (player.health.current <= 0f) {
+                game.setScreen(new GameOverScreen(game));
+                dispose();
+            }
+        }
     }
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         enemies.clear();
         projectiles.clear();
         allies.clear();

@@ -6,15 +6,16 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class MainMenuScreen extends ScreenAdapter {
+public class GameOverScreen extends ScreenAdapter {
     private final ZombieGame game;
     private final OrthographicCamera camera;
+    private float timer;
 
-    public MainMenuScreen(ZombieGame game) {
+    public GameOverScreen(ZombieGame game) {
         this.game = game;
-
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        timer = 5f;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class MainMenuScreen extends ScreenAdapter {
         game.batch.begin();
         game.font.draw(
                 game.batch,
-                "Zombie Game",
+                "Game Over!",
                 Gdx.graphics.getWidth() / 2f,
                 Gdx.graphics.getHeight() / 2f
         );
@@ -35,11 +36,12 @@ public class MainMenuScreen extends ScreenAdapter {
                 game.batch,
                 "Press the Left Mouse Button to Play",
                 Gdx.graphics.getWidth() / 2f,
-                Gdx.graphics.getHeight() / 3f
+                Gdx.graphics.getHeight() / 2.5f
         );
         game.batch.end();
+        timer -= Gdx.graphics.getDeltaTime();
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && timer <= 0f) {
             game.setScreen(new GameScreen(game));
             dispose();
         }

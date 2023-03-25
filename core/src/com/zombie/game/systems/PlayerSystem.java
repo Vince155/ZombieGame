@@ -28,7 +28,6 @@ public class PlayerSystem {
             HashMap<Long, Entity> entities,
             HashMap<Long, Entity> projectileEntities,
             HashMap<Long, Entity> enemyEntities,
-
             Entity cameraEntity,
             ProjectileSystem projectileSystem
     ) {
@@ -60,6 +59,7 @@ public class PlayerSystem {
             }
 
             if (isDead(player)) {
+                // TODO: Switch to game over screen
                 System.out.println("Player is dead");
             }
         }
