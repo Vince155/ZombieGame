@@ -54,6 +54,7 @@ public class EnemySystem {
         fastEnemyTimer = 5f;
         bossTimer = 5f;
         basicEnemyInPlay = true;
+        bossIsDead = false;
     }
 
     public void update(SpriteBatch batch) {
@@ -113,6 +114,14 @@ public class EnemySystem {
 
         while (queue.size() > 0) {
             Long enemyId = queue.poll();
+            Entity enemyEntity = enemyEntities.get(enemyId);
+
+            Enemy enemy = (Enemy) Utils.getComponent(enemyEntity, Enemy.class);
+
+            if (Objects.equals(enemy.name, "boss")) {
+                bossIsDead = true;
+            }
+
             enemyEntities.remove(enemyId);
         }
     }
